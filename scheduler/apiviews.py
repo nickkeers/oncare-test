@@ -1,12 +1,8 @@
 from django.db.models import Max
-from rest_framework import generics, viewsets, status
+from rest_framework import viewsets, status
 from rest_framework.decorators import action
 
-from rest_framework.generics import CreateAPIView
-from rest_framework.views import APIView
 from rest_framework.response import Response
-from django.shortcuts import get_object_or_404
-
 from .models import ScheduleVisit
 from .serializers import ScheduleVisitSerializer
 
@@ -14,6 +10,7 @@ from .serializers import ScheduleVisitSerializer
 class ScheduleVisitViewSet(viewsets.ModelViewSet):
     serializer_class = ScheduleVisitSerializer
     queryset = ScheduleVisit.objects.all()
+    http_method_names = ['get', 'post', 'put', 'patch', 'delete', 'head', 'options', 'trace']
 
     @action(detail=False, methods=['get'])
     def latest(self, request, *args, **kwargs):
@@ -45,8 +42,7 @@ class ScheduleVisitViewSet(viewsets.ModelViewSet):
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
     @action(detail=True, methods=['put'], url_path='visit/(?P<visit_id>[^/.]+)')
-    def update_visit(self, request, *args, **kwargs):
-        visit_id = self.kwargs['visit_id']
+    def update_visit(self, request, visit_id=None, *args, **kwargs):
         try:
             instance = self.queryset.get(pk=visit_id)
         except ScheduleVisit.DoesNotExist:
@@ -70,6 +66,10 @@ class ScheduleVisitViewSet(viewsets.ModelViewSet):
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def perform_destroy(self, instance):
         max_revision = self.queryset.aggregate(Max('revision'))['revision__max'] or 0
         new_instance = ScheduleVisit(
             start_date_time=instance.start_date_time,
@@ -79,4 +79,3 @@ class ScheduleVisitViewSet(viewsets.ModelViewSet):
             revision=max_revision + 1
         )
         new_instance.save()
-        return Response(status=status.HTTP_204_NO_CONTENT)

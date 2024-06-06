@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Schedule</title>
+    <link rel="stylesheet" href="https://matcha.mizu.sh/matcha.css">
+    <style>
+        td.deleted {
+            background-color: red;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>Latest Schedule</h1>
+    <span>Max revision number: {{ max_revision }}</span>
+    <br />
+    <table>
+        <thead>
+            <tr>
+                <th>Revision</th>
+                <th>Type</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Client</th>
+                <th>Carer</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for visit in latest_visits %}
+            <tr>
+                <td>{{ visit.revision }}</td>
+                {% if visit.deleted %}
+                    <td class="deleted">Deleted</td>
+                {% else %}
+                    <td>Changed</td>
+                {% endif %}
+                <td>{{ visit.start_date_time }}</td>
+                <td>{{ visit.end_date_time }}</td>
+                <td>{{ visit.client }}</td>
+                <td>{{ visit.carer }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

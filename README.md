@@ -22,8 +22,12 @@ Thoughts on my approach (before beginning):
 schedule visit for now and increment the revision + set delete. Delete should return an empty response
 * `GET /schedule/{revision}` - Get a schedule by its revision, we can use this to get a specific revision of a schedule
 
+## Views
+
+View the schedule at `/schedule-view/`
 
 ## To run
 
+`python manage.py migrate`
 `python manage.py runserver`
 
