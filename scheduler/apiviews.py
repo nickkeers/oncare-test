@@ -25,15 +25,14 @@ class ScheduleVisitViewSet(viewsets.ModelViewSet):
         else:
             return Response([], status=status.HTTP_404_NOT_FOUND)
 
-    @action(detail=True, methods=['get'])
-    def visit_revision(self, request, pk=None, revision=None, *args, **kwargs):
+    @action(detail=False, methods=['get'], url_path='(?P<revision>[^/.]+)')
+    def visit_revision(self, request, revision=None):
         try:
-            visit = self.queryset.get(pk=pk, revision=revision)
+            visit = self.queryset.get(revision=revision)
+            serializer = self.get_serializer(visit)
+            return Response(serializer.data)
         except ScheduleVisit.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-
-        serializer = self.get_serializer(visit)
-        return Response(serializer.data)
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)

@@ -9,6 +9,6 @@ urlpatterns = [
     path('', include(router.urls)),
     # include this separately to handle latest
     path('schedule/latest/', ScheduleVisitViewSet.as_view({'get': 'latest'}), name='schedule-latest'),
-    path('schedule/<int:pk>/<str:revision>/', ScheduleVisitViewSet.as_view({'get': 'visit_revision'}), name='schedule-visit-revision'),
+    path('schedule/<int:revision>/', ScheduleVisitViewSet.as_view({'get': 'visit_revision'}), name='schedule-visit-revision'),
     path('schedule/visit/<int:visit_id>/', ScheduleVisitViewSet.as_view({'put': 'update_visit'}), name='schedule-update-visit'),
 ]
